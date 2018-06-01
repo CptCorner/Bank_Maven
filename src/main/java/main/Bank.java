@@ -2,8 +2,7 @@ package main;
 
 import verarbeitung.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Bank {
     private long bankleitzahl;
@@ -189,5 +188,83 @@ public class Bank {
         } else throw new KontoNummerNichtVorhandenException(vonKontonr);
     }
 
+    /**
+     * sperrt alle Konten, deren Kontostand negativ ist
+     */
+    public void pleitegeierSperren() {
+        for (Konto tempKonto : kontoList) {
+            if (tempKonto.getKontostand() < 0) tempKonto.sperren();
+        }
+    }
 
+    /**
+     * gibt eine Liste aller Kunden zurueck, die mindestens ein Konto haben, das mindestens den angegebenen Betrag als Kontostand hat
+     *
+     * @param minimum minimaler Betrag
+     * @return Liste der Kunden
+     */
+    public List<Kunde> getKundenMitVollemKonto(double minimum) {
+        List<Kunde> kundenList = new ArrayList<>();
+
+        for (Konto tempKonto : kontoList) {
+            if (!kundenList.contains(tempKonto.getInhaber())) {
+                if (tempKonto.getKontostand() >= minimum)
+                    kundenList.add(tempKonto.getInhaber());
+            }
+        }
+        return kundenList;
+    }
+
+    /**
+     * gibt Liste mit den Geburtstagen der Kunden zurueck
+     *
+     * @return geordnete Liste der Geburtstage aller Kunden
+     */
+    public String getKundengeburtstage() {
+        HashMap<String, Long> namenGeburtstagsMap = new HashMap<>();
+
+        for (Konto tempKonto : kontoList) {
+            if (!namenGeburtstagsMap.containsKey(tempKonto.getInhaber().getName())) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(tempKonto.getInhaber().getGeburtstag().getYear(), tempKonto.getInhaber().getGeburtstag().getMonth().getValue(), tempKonto.getInhaber().getGeburtstag().getDayOfMonth());
+                namenGeburtstagsMap.put(tempKonto.getInhaber().getName(), cal.getTimeInMillis());
+            }
+        }
+
+        Map<String, Long> result = new LinkedHashMap<>();
+        namenGeburtstagsMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .forEachOrdered(x -> result.put(x.getKey(), x.getValue()));
+
+
+        Object[] names = result.keySet().toArray();
+        Object[] dates = result.values().toArray();
+        StringBuilder resultString = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
+        for (int i = 0; i < result.size(); i++) {
+            cal.setTimeInMillis((Long) dates[i]);
+            resultString.append(names[i]).append(": ").append(cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.MONTH) + "." + cal.get(Calendar.YEAR));
+            resultString.append(System.getProperty("line.separator"));
+        }
+        return resultString.toString();
+    }
+
+    /**
+     * @return Liste der Luecken in den Kontonummern
+     */
+    public List<Long> getKontonummernLuecken() {
+
+        long minimum = Collections.min(getAlleKontonummern());
+        long maximum = Collections.max(getAlleKontonummern());
+
+        List<Long> luecken = new ArrayList<>();
+        for (long i = minimum; i <= maximum; i++) {
+            luecken.add(i);
+        }
+
+        for (Long tempKontonummer : getAlleKontonummern()) {
+            luecken.remove((Long) tempKontonummer);
+        }
+        return luecken;
+    }
 }

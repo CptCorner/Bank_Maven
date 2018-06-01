@@ -6,6 +6,7 @@ import org.junit.Test;
 import verarbeitung.Kunde;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class BankTest {
 
@@ -123,5 +124,47 @@ public class BankTest {
         Assert.assertFalse(testBank.getAlleKontonummern().contains(kontonr2));
         Assert.assertTrue(testBank.getAlleKontonummern().contains(kontonr3));
 
+    }
+
+    @Test
+    public void pleitegeierSperren() {
+    }
+
+    @Test
+    public void getKundenMitVollemKonto() {
+    }
+
+    @Test
+    public void getKundengeburtstage() {
+
+        long kontonr1 = testBank.girokontoErstellen(new Kunde("Kunde", "Eins", "Adresse", LocalDate.now().minusDays(2)), 0);
+        long kontonr2 = testBank.girokontoErstellen(new Kunde("Kunde", "Zwei", "Adresse", LocalDate.now().minusDays(6)), 0);
+        long kontonr3 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+
+        System.out.println(testBank.getKundengeburtstage());
+
+    }
+
+    @Test
+    public void getKontonummernLuecken() {
+
+        long kontonr1 = testBank.girokontoErstellen(new Kunde("Kunde", "Eins", "Adresse", LocalDate.now()), 0);
+        long kontonr2 = testBank.girokontoErstellen(new Kunde("Kunde", "Zwei", "Adresse", LocalDate.now()), 0);
+        long kontonr3 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+        long kontonr4 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+        long kontonr5 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+        long kontonr6 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+        long kontonr7 = testBank.girokontoErstellen(new Kunde("Kunde", "Drei", "Adresse", LocalDate.now()), 0);
+
+        testBank.kontoLoeschen(kontonr2);
+        testBank.kontoLoeschen(kontonr3);
+        testBank.kontoLoeschen(kontonr5);
+        testBank.kontoLoeschen(kontonr7);
+
+        List<Long> luecken = testBank.getKontonummernLuecken();
+
+        for (Long tempLuecke : luecken) {
+            System.out.println(tempLuecke);
+        }
     }
 }
