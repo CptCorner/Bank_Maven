@@ -1,9 +1,11 @@
 package verarbeitung;
 
+import java.io.Serializable;
+
 /**
  * stellt ein allgemeines Konto dar
  */
-public abstract class Konto implements Comparable<Konto> {
+public abstract class Konto implements Comparable<Konto>, Serializable {
 
     /**
      * die aktuelle Waehrung
@@ -97,6 +99,11 @@ public abstract class Konto implements Comparable<Konto> {
      */
     public final double getKontostand() {
         return kontostand;
+    }
+
+
+    public boolean isPleite() {
+        return getKontostand() < 0;
     }
 
     /**

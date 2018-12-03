@@ -3,12 +3,14 @@ package verarbeitung;
 
 import org.jetbrains.annotations.Contract;
 
+import java.io.Serializable;
+
 /**
  * enthaelt Euro und die durch Euro definierten Waehrungen
  *
  * @author Jakob Wendt, s0559720
  */
-public enum Waehrung {
+public enum Waehrung implements Serializable {
     /**
      * Euro
      */

@@ -167,4 +167,26 @@ public class BankTest {
             System.out.println(tempLuecke);
         }
     }
+
+
+    @Test
+    public void cloneTest() {
+        //used other names than demanded for better clarity
+
+        long kontonr1 = testBank.girokontoErstellen(new Kunde("Kunde", "Eins", "Adresse", LocalDate.now()), 0);
+        try {
+            Bank clonedBank = (Bank) testBank.clone();
+
+
+            testBank.geldEinzahlen(kontonr1, 12);
+
+            System.out.println(testBank.getKontostand(kontonr1));
+            System.out.println(clonedBank.getKontostand(kontonr1));
+            Assert.assertNotSame(testBank.getKontostand(kontonr1), clonedBank.getKontostand(kontonr1));
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        } catch (KontoNummerNichtVorhandenException e) {
+            e.printStackTrace();
+        }
+    }
 }

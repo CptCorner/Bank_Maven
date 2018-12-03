@@ -1,11 +1,13 @@
 package verarbeitung;
 
+import java.io.Serializable;
+
 /**
  * Liste aller angebotenen Kontoarten
  * @author Doro
  *
  */
-public enum Kontoart {
+public enum Kontoart implements Serializable {
     /**
      * ein Girokonto
      */

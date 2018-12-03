@@ -1,5 +1,6 @@
 package verarbeitung;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Jakob Wendt, s0559720
  */
 
-public class Student extends Kunde {
+public class Student extends Kunde implements Serializable {
     /**
      * Name der Universitaet, an der der Student studiert
      */

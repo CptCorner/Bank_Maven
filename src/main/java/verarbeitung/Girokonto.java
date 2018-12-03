@@ -1,11 +1,13 @@
 package verarbeitung;
 
+import java.io.Serializable;
+
 /**
  * Ein Girokonto
  * @author Doro
  *
  */
-public class Girokonto extends Konto {
+public class Girokonto extends Konto implements Serializable {
     /**
      * Wert, bis zu dem das Konto ueberzogen werden darf
      */

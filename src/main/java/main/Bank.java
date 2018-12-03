@@ -2,9 +2,10 @@ package main;
 
 import verarbeitung.*;
 
+import java.io.*;
 import java.util.*;
 
-public class Bank {
+public class Bank implements Cloneable, Serializable {
     private long bankleitzahl;
     private long anzahlKonten;
     private List<Konto> kontoList;
@@ -188,14 +189,6 @@ public class Bank {
         } else throw new KontoNummerNichtVorhandenException(vonKontonr);
     }
 
-    /**
-     * sperrt alle Konten, deren Kontostand negativ ist
-     */
-    public void pleitegeierSperren() {
-        for (Konto tempKonto : kontoList) {
-            if (tempKonto.getKontostand() < 0) tempKonto.sperren();
-        }
-    }
 
     /**
      * gibt eine Liste aller Kunden zurueck, die mindestens ein Konto haben, das mindestens den angegebenen Betrag als Kontostand hat
@@ -263,8 +256,24 @@ public class Bank {
         }
 
         for (Long tempKontonummer : getAlleKontonummern()) {
-            luecken.remove((Long) tempKontonummer);
+            luecken.remove(tempKontonummer);
         }
         return luecken;
+    }
+
+    protected Object clone() throws CloneNotSupportedException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutput out = new ObjectOutputStream(bos)) {
+            out.writeObject(this);
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+                 ObjectInput in = new ObjectInputStream(bis)) {
+                return in.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
