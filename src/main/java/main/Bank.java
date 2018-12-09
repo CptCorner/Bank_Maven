@@ -30,6 +30,14 @@ public class Bank implements Cloneable, Serializable {
         return bankleitzahl;
     }
 
+
+    public long kontoErstellen(Kontofabrik fabrik) {
+        anzahlKonten++;
+        fabrik.setNr(anzahlKonten);
+        kontoList.add(fabrik.create());
+        return anzahlKonten;
+    }
+
     /**
      * erstellt neues Girokonto
      *
@@ -38,9 +46,7 @@ public class Bank implements Cloneable, Serializable {
      * @return Kontonummer des erstellten Kontos
      */
     public long girokontoErstellen(Kunde inhaber, double dispo) {
-        anzahlKonten++;
-        kontoList.add(new Girokonto(inhaber, anzahlKonten, dispo));
-        return anzahlKonten;
+        return kontoErstellen(new GirokontoFabrik(inhaber, dispo));
     }
 
     /**
@@ -50,9 +56,7 @@ public class Bank implements Cloneable, Serializable {
      * @return Kontonummer des erstellten Kontos
      */
     public long sparbuchErstellen(Kunde inhaber) {
-        anzahlKonten++;
-        kontoList.add(new Sparbuch(inhaber, anzahlKonten));
-        return anzahlKonten;
+        return kontoErstellen(new SparbuchFabrik(inhaber));
     }
 
     /**
