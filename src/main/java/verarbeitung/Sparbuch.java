@@ -45,10 +45,13 @@ public class Sparbuch extends Konto implements Serializable {
         return ausgabe;
     }
 
+
+
     @Override
-    public boolean abheben(double betragInEUR) throws GesperrtException {
-        double betrag = getAktuelleWaehrung().euroInWaehrungUmrechnen(betragInEUR);
-        if (betrag < 0) {
+    boolean checkIfPossible(double betrag) throws GesperrtException {
+
+        double btrg = getAktuelleWaehrung().euroInWaehrungUmrechnen(betrag);
+        if (btrg < 0) {
             throw new IllegalArgumentException();
         }
         if (this.isGesperrt()) {
@@ -59,14 +62,17 @@ public class Sparbuch extends Konto implements Serializable {
         if (heute.getMonth() != zeitpunkt.getMonth() || heute.getYear() != zeitpunkt.getYear()) {
             this.bereitsAbgehoben = 0;
         }
-        if (getKontostand() - betrag >= 0.50 &&
-                bereitsAbgehoben + betrag <= Sparbuch.ABHEBESUMME) {
-            setKontostand(getKontostand() - betrag);
-            bereitsAbgehoben += betrag;
-            this.zeitpunkt = LocalDate.now();
-            return true;
-        } else
-            return false;
+        return getKontostand() - btrg >= 0.50 &&
+                bereitsAbgehoben + btrg <= Sparbuch.ABHEBESUMME;
     }
 
+    @Override
+    void betragAbheben(double betrag) {
+        double btrg = getAktuelleWaehrung().euroInWaehrungUmrechnen(betrag);
+
+        setKontostand(getKontostand() - btrg);
+        bereitsAbgehoben += btrg;
+        this.zeitpunkt = LocalDate.now();
+
+    }
 }

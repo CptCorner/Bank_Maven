@@ -173,8 +173,18 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
      * @throws GesperrtException        wenn das Konto gesperrt ist
      * @throws IllegalArgumentException wenn der betrag negativ ist
      */
-    public abstract boolean abheben(double betrag)
-            throws GesperrtException;
+    /*public abstract boolean abheben(double betrag)
+            throws GesperrtException;*/
+    public final boolean abheben(double betrag) throws GesperrtException {
+        if (checkIfPossible(betrag)) {
+            betragAbheben(betrag);
+            return true;
+        } else return false;
+    }
+
+    abstract boolean checkIfPossible(double betrag) throws GesperrtException;
+
+    abstract void betragAbheben(double betrag);
 
     /**
      * Mit dieser Methode wird der geforderte Betrag in der angegebenen Waehrung vom Konto abgehoben, wenn es nicht gesperrt ist.

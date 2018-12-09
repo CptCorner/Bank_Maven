@@ -48,6 +48,8 @@ public class BankTest {
         long kontonr2 = testBank.girokontoErstellen(new Kunde("Kunde", "Zwei", "Adresse", LocalDate.now()), 500);
         Assert.assertTrue(testBank.geldAbheben(kontonr2, 300));
         Assert.assertFalse(testBank.geldAbheben(kontonr2, 699));
+        long kontonr3 = testBank.sparbuchErstellen(new Kunde("Kunde", "drei", "Adresse", LocalDate.now()));
+        Assert.assertFalse(testBank.geldAbheben(kontonr3, 700));
     }
 
     @Test
