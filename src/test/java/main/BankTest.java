@@ -170,6 +170,19 @@ public class BankTest {
         }
     }
 
+    @Test
+    public void registerObserver() throws KontoNummerNichtVorhandenException {
+        long kontonr1 = testBank.girokontoErstellen(new Kunde("Kunde", "Eins", "Adresse", LocalDate.now()), 0);
+        Observer observer = testBank.registerObserver(kontonr1);
+        System.out.println(testBank.getKontostand(kontonr1));
+        testBank.geldEinzahlen(kontonr1, 12);
+
+
+        long kontonr2 = testBank.sparbuchErstellen(new Kunde("Kunde", "Zwei", "Adresse", LocalDate.now()));
+        Observer observer2 = testBank.registerObserver(kontonr2);
+        System.out.println(testBank.getKontostand(kontonr2));
+        testBank.geldEinzahlen(kontonr2, 15);
+    }
 
     @Test
     public void cloneTest() {

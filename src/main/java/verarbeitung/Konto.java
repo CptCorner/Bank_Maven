@@ -1,11 +1,31 @@
 package verarbeitung;
 
+import main.Observer;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * stellt ein allgemeines Konto dar
  */
 public abstract class Konto implements Comparable<Konto>, Serializable {
+
+    private List<Observer> observers = new ArrayList<Observer>();
+
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public boolean unregisterObserver(Observer observer) {
+        return observers.remove(observer);
+    }
+
+    private void updateObservers() {
+        for (Observer tempObserver : observers) {
+            tempObserver.update();
+        }
+    }
 
     /**
      * die aktuelle Waehrung
@@ -34,6 +54,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
      */
     protected void setKontostand(double kontostand) {
         this.kontostand = kontostand;
+        updateObservers();
     }
 
     /**
@@ -58,6 +79,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
         this.kontostand = 0;
         this.gesperrt = false;
         this.aktuelleWaehrung = Waehrung.EUR;
+        updateObservers();
     }
 
     /**
@@ -65,6 +87,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
      */
     public Konto() {
         this(Kunde.MUSTERMANN, 1234567);
+        updateObservers();
     }
 
     /**
@@ -89,6 +112,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
         if (this.gesperrt)
             throw new GesperrtException(this.nummer);
         this.inhaber = kinh;
+        updateObservers();
 
     }
 
@@ -135,6 +159,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
             throw new IllegalArgumentException("Negativer Betrag");
         }
         setKontostand(getKontostand() + betrag);
+        updateObservers();
     }
 
     /**
@@ -178,6 +203,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
     public final boolean abheben(double betrag) throws GesperrtException {
         if (checkIfPossible(betrag)) {
             betragAbheben(betrag);
+            updateObservers();
             return true;
         } else return false;
     }
@@ -199,7 +225,9 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
     public boolean abheben(double betrag, Waehrung w) throws GesperrtException {
         double betragInEUR = w.waehrungInEuroUmrechnen(betrag);
         double betragInZielWaehrung = aktuelleWaehrung.euroInWaehrungUmrechnen(betragInEUR);
+
         return abheben(betragInZielWaehrung);
+
     }
 
     /**
@@ -207,6 +235,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
      */
     public final void sperren() {
         this.gesperrt = true;
+        updateObservers();
     }
 
     /**
@@ -214,6 +243,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
      */
     public final void entsperren() {
         this.gesperrt = false;
+        updateObservers();
     }
 
 
@@ -258,6 +288,7 @@ public abstract class Konto implements Comparable<Konto>, Serializable {
         double betragInZielWaehrung = neu.euroInWaehrungUmrechnen(betragInEUR);
         setKontostand(betragInZielWaehrung);
         aktuelleWaehrung = neu;
+        updateObservers();
     }
 
     /**

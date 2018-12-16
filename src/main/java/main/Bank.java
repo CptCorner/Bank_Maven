@@ -265,6 +265,24 @@ public class Bank implements Cloneable, Serializable {
         return luecken;
     }
 
+    public Observer registerObserver(Long kontoNummer) {
+        if (getAlleKontonummern().contains(kontoNummer)) {
+
+            for (Konto tempKonto : kontoList) {
+                if (tempKonto.getKontonummer() == kontoNummer) {
+                    Observer observer = new ConsoleObserver(tempKonto);
+                    tempKonto.registerObserver(observer);
+                    return observer;
+                }
+            }
+            return null;
+        } else return null;
+    }
+
+    public boolean unregisterObserver(Observer observer) {
+        return observer.subject.unregisterObserver(observer);
+    }
+
     protected Object clone() throws CloneNotSupportedException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutput out = new ObjectOutputStream(bos)) {
